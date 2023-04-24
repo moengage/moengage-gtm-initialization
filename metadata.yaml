@@ -1,5 +1,5 @@
 homepage: "https://www.moengage.com/"
-documentation: ""
+documentation: "https://developers.moengage.com/hc/en-us/categories/360006308092-Web-SDK"
 versions:
-  - sha: c4c4cde13b645f58d20d359e875fb6a53b46c1f4
+  - sha: 2ae921f31d17b56b2b57b54433b92816ccb24e1e
     changeNotes: 1.0.0 Initial release
