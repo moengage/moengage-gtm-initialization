@@ -1,4 +1,5 @@
 homepage: "https://www.moengage.com/"
 documentation: ""
 versions:
-  
+  - sha: a2de6289350d205ebdad6e85a45edd2994d52492
+    changeNotes: 1.0.0 Initial release
