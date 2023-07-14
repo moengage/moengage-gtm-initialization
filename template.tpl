@@ -108,11 +108,16 @@ const log = require('logToConsole');
 const queryPermission = require('queryPermission');
 const injectScript = require('injectScript');
 const callInWindow = require('callInWindow');
+const JSON = require('JSON');
+
 
 const url = 'https://cdn.moengage.com/webpush/moe_webSdk.min.latest.js';
 const message = 'Moengage: ';
 
 const onSuccess = () => {
+  if(data.cards) {
+     data.cards = JSON.parse(data.cards);
+  }
   callInWindow('moe', data);
   if(data.enableWebpV2) {
     const webPURL = 'https://cdn.moengage.com/webpush/moe_webSdk_webp.min.latest.js?app_id=' + data.app_id + '&cluster=' + data.cluster;
@@ -327,6 +332,6 @@ setup: |-
 
 ___NOTES___
 
-Created on 13/07/2023, 17:12:03
+Created on 14/07/2023, 11:27:54
 
 
