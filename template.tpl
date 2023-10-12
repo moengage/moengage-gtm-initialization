@@ -73,6 +73,12 @@ ___TEMPLATE_PARAMETERS___
     "simpleValueType": true
   },
   {
+    "type": "TEXT",
+    "name": "swScope",
+    "displayName": "Serviceworker scope",
+    "simpleValueType": true
+  },
+  {
     "type": "CHECKBOX",
     "name": "disable_onsite",
     "checkboxText": "Is Onsite-Messaging disabled?",
@@ -332,6 +338,6 @@ setup: |-
 
 ___NOTES___
 
-Created on 14/07/2023, 11:27:54
+Created on 12/10/2023, 15:44:38
 
 
