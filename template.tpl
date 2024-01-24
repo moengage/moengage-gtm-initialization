@@ -116,8 +116,8 @@ const injectScript = require('injectScript');
 const callInWindow = require('callInWindow');
 const JSON = require('JSON');
 
-
-const url = 'https://cdn.moengage.com/webpush/moe_webSdk.min.latest.js';
+const cluster = data.cluster || 'DC_1';
+const url = "https://cdn.moengage.com/release/" + cluster.toLowerCase() + "/moe_webSdk.min.latest.js";
 const message = 'Moengage: ';
 
 const onSuccess = () => {
@@ -126,7 +126,7 @@ const onSuccess = () => {
   }
   callInWindow('moe', data);
   if(data.enableWebpV2) {
-    const webPURL = 'https://cdn.moengage.com/webpush/moe_webSdk_webp.min.latest.js?app_id=' + data.app_id + '&cluster=' + data.cluster;
+    const webPURL = 'https://cdn.moengage.com/release/' + cluster.toLowerCase() + '/moe_webSdk_webp.min.latest.js?app_id=' + data.app_id + '&cluster=' + data.cluster;
     injectScript(webPURL, () => {  data.gtmOnSuccess();}, onFailure, webPURL);
   } else {
     data.gtmOnSuccess();
@@ -338,6 +338,6 @@ setup: |-
 
 ___NOTES___
 
-Created on 12/10/2023, 15:44:38
+Created on 06/12/2023, 19:36:08
 
 
