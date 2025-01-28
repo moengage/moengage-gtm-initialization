@@ -3,5 +3,5 @@ documentation: "https://developers.moengage.com/hc/en-us/categories/360006308092
 versions:
   - sha: 2ae921f31d17b56b2b57b54433b92816ccb24e1e
     changeNotes: 1.0.0 Initial release
-  - sha: 2ae921f31d17b56b2b57b54433b92816ccb24e1e
+  - sha: 73ffa0f91190bfd0d0a5af0ad7529b75fa48cb47
     changeNotes: 1.1.0 Changed App ID to Workspace ID
