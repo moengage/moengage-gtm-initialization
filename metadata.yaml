@@ -5,3 +5,5 @@ versions:
     changeNotes: 1.0.0 Initial release
   - sha: 73ffa0f91190bfd0d0a5af0ad7529b75fa48cb47
     changeNotes: 1.1.0 Changed App ID to Workspace ID
+  - sha: 4aa88c00da7b085679abe37a8d9b007b41f58b1d
+    changeNotes: 1.2.0 Added disableSdk, disableCookies and bots_list flags
