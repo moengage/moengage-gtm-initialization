@@ -95,13 +95,33 @@ ___TEMPLATE_PARAMETERS___
   {
     "type": "CHECKBOX",
     "name": "enableWebpV2",
-    "checkboxText": "Enable Web Personalization",
+    "checkboxText": "Enable Web Personalization?",
     "simpleValueType": true
+  },
+  {
+    "type": "CHECKBOX",
+    "name": "disableSdk",
+    "checkboxText": "Keep SDK disabled?",
+    "simpleValueType": true,
+    "defaultValue": false
+  },
+  {
+    "type": "CHECKBOX",
+    "name": "disableCookies",
+    "checkboxText": "Disable cookies tracking? (This would affect cross-domain sharing)",
+    "simpleValueType": true,
+    "defaultValue": false
   },
   {
     "type": "TEXT",
     "name": "cards",
     "displayName": "Cards Config (in JSON)",
+    "simpleValueType": true
+  },
+  {
+    "type": "TEXT",
+    "name": "bots_list",
+    "displayName": "List of known bots, if any (in JSON)",
     "simpleValueType": true
   }
 ]
@@ -123,6 +143,9 @@ const message = 'Moengage: ';
 const onSuccess = () => {
   if(data.cards) {
      data.cards = JSON.parse(data.cards);
+  }
+  if (data.bots_list) {
+     data.bots_list = JSON.parse(data.bots_list); 
   }
   callInWindow('moe', data);
   if(data.enableWebpV2) {
@@ -342,4 +365,4 @@ Created on 06/12/2023, 19:36:08
 
 Changed App ID to Workspace ID on 28/01/2025, 18:08:00
 
-
+Added disableSdk, disableCookies and bots_list flags on 28/04/2025, 15:50:00
