@@ -108,7 +108,7 @@ ___TEMPLATE_PARAMETERS___
   {
     "type": "CHECKBOX",
     "name": "disableCookies",
-    "checkboxText": "Disable cookies tracking? (This would affect cross-domain sharing)",
+    "checkboxText": "Disable cookies tracking? (This would disable cross-subdomain user tracking)",
     "simpleValueType": true,
     "defaultValue": false
   },
