@@ -68,10 +68,10 @@ ___TEMPLATE_PARAMETERS___
   },
   {
     "type": "TEXT",
-    "name": "project_code",
-    "displayName": "Project Code",
+    "name": "project_id",
+    "displayName": "Project ID",
     "simpleValueType": true,
-    "help": "Enter the Project Code, if applicable. Found in your MoEngage Dashboard.",
+    "help": "Enter the Project ID, if applicable. Found in your MoEngage Dashboard.",
     "defaultValue": "null"
   },
   {
@@ -155,8 +155,8 @@ const onSuccess = () => {
   if (data.bots_list) {
      data.bots_list = JSON.parse(data.bots_list); 
   }
-  if (data.project_code == null || data.project_code == "null" || data.project_code == "") {
-     data.project_code = null;
+  if (data.project_id == null || data.project_id == "null" || data.project_id == "") {
+     data.project_id = null;
   }
   callInWindow('moe', data);
   if(data.enableWebpV2) {
@@ -378,4 +378,4 @@ Changed App ID to Workspace ID on 28/01/2025, 18:08:00
 
 Added disableSdk, disableCookies and bots_list flags on 28/04/2025, 15:50:00
 
-Added project_code support on 08/07/2025, 18:10:00
+Added project_id support on 08/07/2025, 18:10:00
