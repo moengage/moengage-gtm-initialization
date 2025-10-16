@@ -68,6 +68,14 @@ ___TEMPLATE_PARAMETERS___
   },
   {
     "type": "TEXT",
+    "name": "project_id",
+    "displayName": "Project ID",
+    "simpleValueType": true,
+    "help": "Enter the Project ID, if applicable. Found in your MoEngage Dashboard.",
+    "defaultValue": "null"
+  },
+  {
+    "type": "TEXT",
     "name": "swPath",
     "displayName": "Serviceworker custom path",
     "simpleValueType": true
@@ -146,6 +154,9 @@ const onSuccess = () => {
   }
   if (data.bots_list) {
      data.bots_list = JSON.parse(data.bots_list); 
+  }
+  if (data.project_id == null || data.project_id == "null" || data.project_id == "") {
+     data.project_id = null;
   }
   callInWindow('moe', data);
   if(data.enableWebpV2) {
@@ -366,3 +377,5 @@ Created on 06/12/2023, 19:36:08
 Changed App ID to Workspace ID on 28/01/2025, 18:08:00
 
 Added disableSdk, disableCookies and bots_list flags on 28/04/2025, 15:50:00
+
+Added project_id support on 08/07/2025, 18:10:00
