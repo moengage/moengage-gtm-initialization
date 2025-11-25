@@ -134,8 +134,8 @@ ___TEMPLATE_PARAMETERS___
   },
   {
     "type": "TEXT",
-    "name": "customDomain",
-    "displayName": "Custom Domain",
+    "name": "customProxyDomain",
+    "displayName": "Custom Proxy Domain",
     "simpleValueType": true
   }
 ]
