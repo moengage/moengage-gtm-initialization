@@ -386,4 +386,4 @@ Added disableSdk, disableCookies and bots_list flags on 28/04/2025, 15:50:00
 
 Added project_id support on 08/07/2025, 18:10:00
 
-Added customDomain support on 24/11/2025, 16:15:00
+Added customDomain support on 25/11/2025, 11:45:00
