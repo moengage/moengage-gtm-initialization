@@ -43,21 +43,41 @@ ___TEMPLATE_PARAMETERS___
   },
   {
     "type": "SELECT",
-    "name": "debug_logs",
-    "displayName": "Debug Logs",
-    "macrosInSelect": false,
+    "name": "env",
+    "displayName": "Environment",
+    "macrosInSelect": true,
+    "selectItems": [
+      {
+        "value": "TEST",
+        "displayValue": "Test"
+      },
+      {
+        "value": "LIVE",
+        "displayValue": "Live"
+      }
+    ],
+    "simpleValueType": true
+  },
+  {
+    "type": "SELECT",
+    "name": "logLevel",
+    "displayName": "Logs Level",
+    "macrosInSelect": true,
     "selectItems": [
       {
         "value": 0,
-        "displayValue": "0"
+        "displayValue": "None"
       },
       {
         "value": 1,
-        "displayValue": "1"
+        "displayValue": "Limited"
+      },
+      {
+        "value": 2,
+        "displayValue": "All"
       }
     ],
-    "simpleValueType": true,
-    "defaultValue": 0
+    "simpleValueType": true
   },
   {
     "type": "TEXT",
@@ -131,6 +151,12 @@ ___TEMPLATE_PARAMETERS___
     "name": "bots_list",
     "displayName": "List of known bots, if any (in JSON)",
     "simpleValueType": true
+  },
+  {
+    "type": "TEXT",
+    "name": "customProxyDomain",
+    "displayName": "Custom Proxy Domain",
+    "simpleValueType": true
   }
 ]
 
@@ -160,7 +186,7 @@ const onSuccess = () => {
   }
   callInWindow('moe', data);
   if(data.enableWebpV2) {
-    const webPURL = 'https://cdn.moengage.com/release/' + cluster.toLowerCase() + '/moe_webSdk_webp.min.latest.js?app_id=' + data.app_id + '&cluster=' + data.cluster;
+    const webPURL = 'https://cdn.moengage.com/release/' + cluster.toLowerCase() + '/moe_webSdk_webp.min.latest.js?app_id=' + data.app_id + '&cluster=' + data.cluster + '&env=' + data.env;
     injectScript(webPURL, () => {  data.gtmOnSuccess();}, onFailure, webPURL);
   } else {
     data.gtmOnSuccess();
@@ -379,3 +405,7 @@ Changed App ID to Workspace ID on 28/01/2025, 18:08:00
 Added disableSdk, disableCookies and bots_list flags on 28/04/2025, 15:50:00
 
 Added project_id support on 08/07/2025, 18:10:00
+
+Added customDomain support on 25/11/2025, 11:45:00
+
+Decoupling of debug logs to env and logLevel on 06/12/2025, 18:15:00
