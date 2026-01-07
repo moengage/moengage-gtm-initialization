@@ -151,12 +151,6 @@ ___TEMPLATE_PARAMETERS___
     "name": "bots_list",
     "displayName": "List of known bots, if any (in JSON)",
     "simpleValueType": true
-  },
-  {
-    "type": "TEXT",
-    "name": "customProxyDomain",
-    "displayName": "Custom Proxy Domain",
-    "simpleValueType": true
   }
 ]
 
@@ -405,7 +399,5 @@ Changed App ID to Workspace ID on 28/01/2025, 18:08:00
 Added disableSdk, disableCookies and bots_list flags on 28/04/2025, 15:50:00
 
 Added project_id support on 08/07/2025, 18:10:00
-
-Added customDomain support on 25/11/2025, 11:45:00
 
 Decoupling of debug logs to env and logLevel on 06/12/2025, 18:15:00
