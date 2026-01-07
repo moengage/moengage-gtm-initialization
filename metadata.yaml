@@ -9,3 +9,5 @@ versions:
     changeNotes: 1.2.0 Added disableSdk, disableCookies and bots_list flags
   - sha: 39190be4a35e83faf1ba77b192a280a8847e5ac2
     changeNotes: 1.3.0 Added support for project_id
+  - sha: 0b1c1d01d7bff853f8bc5ff9e0be62f04953d1d6
+    changeNotes: 1.4.0 Added support for decoupling environment and logs
