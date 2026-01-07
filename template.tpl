@@ -45,7 +45,7 @@ ___TEMPLATE_PARAMETERS___
     "type": "SELECT",
     "name": "env",
     "displayName": "Environment",
-    "macrosInSelect": true,
+    "macrosInSelect": false,
     "selectItems": [
       {
         "value": "TEST",
@@ -62,7 +62,7 @@ ___TEMPLATE_PARAMETERS___
     "type": "SELECT",
     "name": "logLevel",
     "displayName": "Logs Level",
-    "macrosInSelect": true,
+    "macrosInSelect": false,
     "selectItems": [
       {
         "value": 0,
