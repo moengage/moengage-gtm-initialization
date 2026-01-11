@@ -43,21 +43,41 @@ ___TEMPLATE_PARAMETERS___
   },
   {
     "type": "SELECT",
-    "name": "debug_logs",
-    "displayName": "Debug Logs",
+    "name": "env",
+    "displayName": "Environment",
+    "macrosInSelect": false,
+    "selectItems": [
+      {
+        "value": "TEST",
+        "displayValue": "Test"
+      },
+      {
+        "value": "LIVE",
+        "displayValue": "Live"
+      }
+    ],
+    "simpleValueType": true
+  },
+  {
+    "type": "SELECT",
+    "name": "logLevel",
+    "displayName": "Logs Level",
     "macrosInSelect": false,
     "selectItems": [
       {
         "value": 0,
-        "displayValue": "0"
+        "displayValue": "None"
       },
       {
         "value": 1,
-        "displayValue": "1"
+        "displayValue": "Limited"
+      },
+      {
+        "value": 2,
+        "displayValue": "All"
       }
     ],
-    "simpleValueType": true,
-    "defaultValue": 0
+    "simpleValueType": true
   },
   {
     "type": "TEXT",
@@ -166,7 +186,7 @@ const onSuccess = () => {
   }
   callInWindow('moe', data);
   if(data.enableWebpV2) {
-    const webPURL = 'https://cdn.moengage.com/release/' + cluster.toLowerCase() + '/moe_webSdk_webp.min.latest.js?app_id=' + data.app_id + '&cluster=' + data.cluster;
+    const webPURL = 'https://cdn.moengage.com/release/' + cluster.toLowerCase() + '/moe_webSdk_webp.min.latest.js?app_id=' + data.app_id + '&cluster=' + data.cluster + '&env=' + data.env;
     injectScript(webPURL, () => {  data.gtmOnSuccess();}, onFailure, webPURL);
   } else {
     data.gtmOnSuccess();
@@ -386,4 +406,6 @@ Added disableSdk, disableCookies and bots_list flags on 28/04/2025, 15:50:00
 
 Added project_id support on 08/07/2025, 18:10:00
 
-Added customDomain support on 25/11/2025, 11:45:00
+Added customProxyDomain support on 25/11/2025, 11:45:00
+
+Decoupling of debug logs to env and logLevel on 06/12/2025, 18:15:00
