@@ -172,7 +172,10 @@ const callInWindow = require('callInWindow');
 const JSON = require('JSON');
 
 const cluster = data.cluster || 'DC_1';
-const url = "https://cdn.moengage.com/release/" + cluster.toLowerCase() + "/moe_webSdk.min.latest.js";
+let url = "https://cdn.moengage.com/release/" + cluster.toLowerCase() + "/moe_webSdk.min.latest.js";
+if (data.customProxyDomain && data.customProxyDomain.length) {
+ url = url.replace("cdn.moengage.com", "cdn." + data.customProxyDomain); 
+}
 const message = 'Moengage: ';
 
 const onSuccess = () => {
@@ -187,7 +190,10 @@ const onSuccess = () => {
   }
   callInWindow('moe', data);
   if(data.enableWebpV2) {
-    const webPURL = 'https://cdn.moengage.com/release/' + cluster.toLowerCase() + '/moe_webSdk_webp.min.latest.js?app_id=' + data.app_id + '&cluster=' + data.cluster + '&env=' + data.env;
+    let webPURL = 'https://cdn.moengage.com/release/' + cluster.toLowerCase() + '/moe_webSdk_webp.min.latest.js?app_id=' + data.app_id + '&cluster=' + data.cluster + '&env=' + data.env;
+    if (data.customProxyDomain && data.customProxyDomain.length) {
+     webPURL = webPURL.replace("cdn.moengage.com", "cdn." + data.customProxyDomain); 
+    }
     injectScript(webPURL, () => {  data.gtmOnSuccess();}, onFailure, webPURL);
   } else {
     data.gtmOnSuccess();
