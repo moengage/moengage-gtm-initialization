@@ -413,6 +413,6 @@ Added disableSdk, disableCookies and bots_list flags on 28/04/2025, 15:50:00
 
 Added project_id support on 08/07/2025, 18:10:00
 
-Added customProxyDomain support on 25/11/2025, 11:45:00
-
 Decoupling of debug logs to env and logLevel on 06/12/2025, 18:15:00
+
+Added customProxyDomain support on 22/01/2026, 17:15:00
