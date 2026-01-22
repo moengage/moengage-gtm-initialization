@@ -151,6 +151,13 @@ ___TEMPLATE_PARAMETERS___
     "name": "bots_list",
     "displayName": "List of known bots, if any (in JSON)",
     "simpleValueType": true
+  },
+  {
+    "type": "TEXT",
+    "name": "customProxyDomain",
+    "displayName": "Custom Proxy Domain",
+    "simpleValueType": true,
+    "help": "Enter the URL of your custom proxy server. This helps improve data collection accuracy by routing requests through a first-party domain, which can help bypass certain ad-blocking software."
   }
 ]
 
@@ -165,7 +172,10 @@ const callInWindow = require('callInWindow');
 const JSON = require('JSON');
 
 const cluster = data.cluster || 'DC_1';
-const url = "https://cdn.moengage.com/release/" + cluster.toLowerCase() + "/moe_webSdk.min.latest.js";
+let url = "https://cdn.moengage.com/release/" + cluster.toLowerCase() + "/moe_webSdk.min.latest.js";
+if (data.customProxyDomain && data.customProxyDomain.length) {
+ url = url.replace("cdn.moengage.com", "cdn." + data.customProxyDomain); 
+}
 const message = 'Moengage: ';
 
 const onSuccess = () => {
@@ -180,7 +190,10 @@ const onSuccess = () => {
   }
   callInWindow('moe', data);
   if(data.enableWebpV2) {
-    const webPURL = 'https://cdn.moengage.com/release/' + cluster.toLowerCase() + '/moe_webSdk_webp.min.latest.js?app_id=' + data.app_id + '&cluster=' + data.cluster + '&env=' + data.env;
+    let webPURL = 'https://cdn.moengage.com/release/' + cluster.toLowerCase() + '/moe_webSdk_webp.min.latest.js?app_id=' + data.app_id + '&cluster=' + data.cluster + '&env=' + data.env;
+    if (data.customProxyDomain && data.customProxyDomain.length) {
+     webPURL = webPURL.replace("cdn.moengage.com", "cdn." + data.customProxyDomain); 
+    }
     injectScript(webPURL, () => {  data.gtmOnSuccess();}, onFailure, webPURL);
   } else {
     data.gtmOnSuccess();
@@ -401,3 +414,5 @@ Added disableSdk, disableCookies and bots_list flags on 28/04/2025, 15:50:00
 Added project_id support on 08/07/2025, 18:10:00
 
 Decoupling of debug logs to env and logLevel on 06/12/2025, 18:15:00
+
+Added customProxyDomain support on 22/01/2026, 17:15:00
