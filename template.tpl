@@ -31,7 +31,7 @@ ___TEMPLATE_PARAMETERS___
 [
   {
     "type": "TEXT",
-    "name": "app_id",
+    "name": "appId",
     "displayName": "Workspace ID (earlier App ID)",
     "simpleValueType": true,
     "valueValidators": [
@@ -88,11 +88,10 @@ ___TEMPLATE_PARAMETERS___
   },
   {
     "type": "TEXT",
-    "name": "project_id",
+    "name": "projectId",
     "displayName": "Project ID",
     "simpleValueType": true,
-    "help": "Enter the Project ID, if applicable. Found in your MoEngage Dashboard.",
-    "defaultValue": "null"
+    "help": "Enter the Project ID, if applicable. Found in your MoEngage Dashboard."
   },
   {
     "type": "TEXT",
@@ -108,7 +107,7 @@ ___TEMPLATE_PARAMETERS___
   },
   {
     "type": "CHECKBOX",
-    "name": "disable_onsite",
+    "name": "disableOnsite",
     "checkboxText": "Is On-site Messaging disabled?",
     "simpleValueType": true,
     "defaultValue": false
@@ -148,7 +147,7 @@ ___TEMPLATE_PARAMETERS___
   },
   {
     "type": "TEXT",
-    "name": "bots_list",
+    "name": "botsList",
     "displayName": "List of known bots, if any (in JSON)",
     "simpleValueType": true
   },
@@ -182,15 +181,15 @@ const onSuccess = () => {
   if(data.cards) {
      data.cards = JSON.parse(data.cards);
   }
-  if (data.bots_list) {
-     data.bots_list = JSON.parse(data.bots_list); 
+  if (data.botsList) {
+     data.botsList = JSON.parse(data.botsList); 
   }
-  if (data.project_id == null || data.project_id == "null" || data.project_id == "") {
-     data.project_id = null;
+  if (data.projectId.trim() == "") {
+     data.projectId = null;
   }
   callInWindow('moe', data);
   if(data.enableWebpV2) {
-    let webPURL = 'https://cdn.moengage.com/release/' + cluster.toLowerCase() + '/moe_webSdk_webp.min.latest.js?app_id=' + data.app_id + '&cluster=' + data.cluster + '&env=' + data.env;
+    let webPURL = 'https://cdn.moengage.com/release/' + cluster.toLowerCase() + '/moe_webSdk_webp.min.latest.js?app_id=' + data.appId + '&cluster=' + data.cluster + '&env=' + data.env;
     if (data.customProxyDomain && data.customProxyDomain.length) {
      webPURL = webPURL.replace("cdn.moengage.com", "cdn." + data.customProxyDomain); 
     }
@@ -416,3 +415,5 @@ Added project_id support on 08/07/2025, 18:10:00
 Decoupling of debug logs to env and logLevel on 06/12/2025, 18:15:00
 
 Added customProxyDomain support on 22/01/2026, 17:15:00
+
+Standardized SDK Config and API names on 31/01/2026, 00:30:00
