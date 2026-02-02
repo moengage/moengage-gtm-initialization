@@ -215,7 +215,7 @@ const loadSdk = () => {
 
 // Try to load the bridge, then the SDK
 // Use the hosted bridge file URL here
-const bridgeScriptUrl = 'https://cdn.moengage.com/release/moengage-gtm.min.latest.js';
+const bridgeScriptUrl = 'https://cdn.moengage.com/webpush/sdk.gtm.min.latest.js';
 if (queryPermission('inject_script', bridgeScriptUrl)) {
   injectScript(bridgeScriptUrl, loadSdk, loadSdk, bridgeScriptUrl);
 } else {
