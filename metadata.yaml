@@ -13,3 +13,5 @@ versions:
     changeNotes: 1.4.0 Added support for decoupling environment and logs
   - sha: 171d7bc1c8b884341bf35b81d022db114574160b
     changeNotes: 1.5.0 Added support for customProxyDomain
+  - sha: 0753f8259e993532d1f24b4a3b5b60536f1004b5
+    changeNotes: 1.6.0 Added support for GTM sequencing

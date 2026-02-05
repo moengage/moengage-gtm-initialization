@@ -205,10 +205,19 @@ const onFailure = (err) => {
   data.gtmOnFailure();
 };
 
-if (queryPermission('inject_script', url)) {
-  injectScript(url, onSuccess, onFailure, url);
+const loadSdk = () => {
+  if (queryPermission('inject_script', url)) {
+    injectScript(url, onSuccess, onFailure, url);
+  } else {
+    log(message, "Load script " + url + " failed due to permissions mismatch!");
+  }
+};
+
+const bridgeScriptUrl = 'https://cdn.moengage.com/webpush/sdk.gtm.min.latest.js';
+if (queryPermission('inject_script', bridgeScriptUrl)) {
+  injectScript(bridgeScriptUrl, loadSdk, loadSdk, bridgeScriptUrl);
 } else {
-  log(message, "Load script " + url + " failed due to permissions mismatch!");
+  loadSdk();
 }
 
 
@@ -416,3 +425,5 @@ Added project_id support on 08/07/2025, 18:10:00
 Decoupling of debug logs to env and logLevel on 06/12/2025, 18:15:00
 
 Added customProxyDomain support on 22/01/2026, 17:15:00
+
+Added support for GTM sequencing on 23/01/2026, 11:50:00
