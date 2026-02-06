@@ -156,7 +156,6 @@ ___TEMPLATE_PARAMETERS___
     "type": "TEXT",
     "name": "customProxyDomain",
     "displayName": "Custom Proxy Domain",
-    "simpleValueType": true
     "simpleValueType": true,
     "help": "Enter the URL of your custom proxy server. This helps improve data collection accuracy by routing requests through a first-party domain, which can help bypass certain ad-blocking software."
   },
@@ -164,7 +163,6 @@ ___TEMPLATE_PARAMETERS___
     "type": "TEXT",
     "name": "contentSecurityNonce",
     "displayName": "Content Security Nonce",
-    "simpleValueType": true
     "simpleValueType": true,
     "help": "A cryptographic nonce to bypass strict Content Security Policy (CSP) restrictions. Applied to the script attribute."
   }
