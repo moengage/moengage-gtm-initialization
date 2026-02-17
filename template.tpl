@@ -201,6 +201,9 @@ const onSuccess = () => {
     if (data.customProxyDomain && data.customProxyDomain.length) {
      webPURL = webPURL.replace("cdn.moengage.com", "cdn." + data.customProxyDomain); 
     }
+    if (data.contentSecurityNonce && data.contentSecurityNonce.length) {
+      webPURL = webPURL + '&contentSecurityNonce=' + data.contentSecurityNonce;
+    }
     injectScript(webPURL, () => {  data.gtmOnSuccess();}, onFailure, webPURL);
   } else {
     data.gtmOnSuccess();
