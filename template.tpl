@@ -223,7 +223,10 @@ const loadSdk = () => {
   }
 };
 
-const bridgeScriptUrl = 'https://cdn.moengage.com/webpush/sdk.gtm.min.latest.js';
+let bridgeScriptUrl = 'https://cdn.moengage.com/release/' + cluster.toLowerCase() + '/sdk.gtm.min.latest.js';
+if (data.customProxyDomain && data.customProxyDomain.length) {
+  bridgeScriptUrl = bridgeScriptUrl.replace("cdn.moengage.com", "cdn." + data.customProxyDomain);
+}
 if (queryPermission('inject_script', bridgeScriptUrl)) {
   injectScript(bridgeScriptUrl, loadSdk, loadSdk, bridgeScriptUrl);
 } else {
@@ -439,3 +442,5 @@ Added customProxyDomain support on 22/01/2026, 17:15:00
 Added support for GTM sequencing on 23/01/2026, 11:50:00
 
 Added support for Content Security Nonce on 06/02/2026, 11:15:00
+
+Added customProxyDomain support for GTM sequencing on 25/02/2026, 11:50:00
