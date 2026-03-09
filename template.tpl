@@ -1,12 +1,4 @@
-﻿___TERMS_OF_SERVICE___
-
-By creating or modifying this file you agree to Google Tag Manager's Community
-Template Gallery Developer Terms of Service available at
-https://developers.google.com/tag-manager/gallery-tos (or such other URL as
-Google may provide), as modified from time to time.
-
-
-___INFO___
+﻿___INFO___
 
 {
   "type": "TAG",
@@ -195,6 +187,8 @@ const onSuccess = () => {
   if (data.project_id == null || data.project_id == "null" || data.project_id == "") {
      data.project_id = null;
   }
+  data.integrationType = 'GTM';
+  
   callInWindow('moe', data);
   if(data.enableWebpV2) {
     let webPURL = 'https://cdn.moengage.com/release/' + cluster.toLowerCase() + '/moe_webSdk_webp.min.latest.js?app_id=' + data.app_id + '&cluster=' + data.cluster + '&env=' + data.env;
@@ -444,3 +438,5 @@ Added support for GTM sequencing on 23/01/2026, 11:50:00
 Added support for Content Security Nonce on 06/02/2026, 11:15:00
 
 Added customProxyDomain support for GTM sequencing on 25/02/2026, 11:50:00
+
+
