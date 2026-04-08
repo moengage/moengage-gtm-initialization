@@ -157,6 +157,13 @@ ___TEMPLATE_PARAMETERS___
     "displayName": "Custom Proxy Domain",
     "simpleValueType": true,
     "help": "Enter the URL of your custom proxy server. This helps improve data collection accuracy by routing requests through a first-party domain, which can help bypass certain ad-blocking software."
+  },
+  {
+    "type": "TEXT",
+    "name": "contentSecurityNonce",
+    "displayName": "Content Security Nonce",
+    "simpleValueType": true,
+    "help": "A cryptographic nonce to bypass strict Content Security Policy (CSP) restrictions. Applied to the script attribute."
   }
 ]
 
@@ -193,6 +200,9 @@ const onSuccess = () => {
     if (data.customProxyDomain && data.customProxyDomain.length) {
      webPURL = webPURL.replace("cdn.moengage.com", "cdn." + data.customProxyDomain); 
     }
+    if (data.contentSecurityNonce && data.contentSecurityNonce.length) {
+      webPURL = webPURL + '&contentSecurityNonce=' + data.contentSecurityNonce;
+    }
     injectScript(webPURL, () => {  data.gtmOnSuccess();}, onFailure, webPURL);
   } else {
     data.gtmOnSuccess();
@@ -204,10 +214,22 @@ const onFailure = (err) => {
   data.gtmOnFailure();
 };
 
-if (queryPermission('inject_script', url)) {
-  injectScript(url, onSuccess, onFailure, url);
+const loadSdk = () => {
+  if (queryPermission('inject_script', url)) {
+    injectScript(url, onSuccess, onFailure, url);
+  } else {
+    log(message, "Load script " + url + " failed due to permissions mismatch!");
+  }
+};
+
+let bridgeScriptUrl = 'https://cdn.moengage.com/release/' + cluster.toLowerCase() + '/sdk.gtm.min.latest.js';
+if (data.customProxyDomain && data.customProxyDomain.length) {
+  bridgeScriptUrl = bridgeScriptUrl.replace("cdn.moengage.com", "cdn." + data.customProxyDomain);
+}
+if (queryPermission('inject_script', bridgeScriptUrl)) {
+  injectScript(bridgeScriptUrl, loadSdk, loadSdk, bridgeScriptUrl);
 } else {
-  log(message, "Load script " + url + " failed due to permissions mismatch!");
+  loadSdk();
 }
 
 
@@ -416,4 +438,10 @@ Decoupling of debug logs to env and logLevel on 06/12/2025, 18:15:00
 
 Added customProxyDomain support on 22/01/2026, 17:15:00
 
+Added support for GTM sequencing on 23/01/2026, 11:50:00
+
 Standardized SDK Config and API names on 31/01/2026, 00:30:00
+
+Added support for Content Security Nonce on 06/02/2026, 11:15:00
+
+Added customProxyDomain support for GTM sequencing on 25/02/2026, 11:50:00
