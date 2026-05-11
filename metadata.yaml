@@ -17,5 +17,7 @@ versions:
     changeNotes: 1.6.0 Added support for GTM sequencing
   - sha: d4614ad31c021b6c2decd4423b9cc7fd03626b15
     changeNotes: 1.7.0 Added support for Content Security Nonce
+  - sha: 6ffc48ab30cb4a83a9980d8918ca11657f76a59b
+    changeNotes: 1.8.0 Added support for customProxyDomain for GTM sequencing and updated script path
   - sha: 5456cd94d80dcb9c1be9b51d0a7dce9a50627009
-    changeNotes: 1.8.0 Removed support for GTM sequencing script
+    changeNotes: 1.9.0 Removed support for GTM sequencing script
