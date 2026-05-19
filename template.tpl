@@ -214,11 +214,6 @@ const onSuccess = () => {
   }
 };
 
-const onFailure = (err) => {
-  log(message, 'Error loading Moengage Web SDK from ' + url, err);
-  data.gtmOnFailure();
-};
-
 if (queryPermission('inject_script', url)) {
   injectScript(url, onSuccess, onFailure, url);
 } else {
