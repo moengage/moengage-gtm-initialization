@@ -195,7 +195,7 @@ const onSuccess = () => {
   if (data.botsList) {
      data.botsList = JSON.parse(data.botsList);
   }
-  if (data.projectId.trim() == "") {
+  if (!data.projectId || data.projectId.trim() == "") {
      data.projectId = null;
   }
   callInWindow('moe', data);
