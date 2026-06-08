@@ -1,12 +1,4 @@
-﻿___TERMS_OF_SERVICE___
-
-By creating or modifying this file you agree to Google Tag Manager's Community
-Template Gallery Developer Terms of Service available at
-https://developers.google.com/tag-manager/gallery-tos (or such other URL as
-Google may provide), as modified from time to time.
-
-
-___INFO___
+﻿___INFO___
 
 {
   "type": "TAG",
@@ -198,6 +190,8 @@ const onSuccess = () => {
   if (!data.projectId || data.projectId.trim() == "") {
      data.projectId = null;
   }
+  data.integrationType = 'GTM';
+  
   callInWindow('moe', data);
   if(data.enableWebpV2) {
     let webPURL = 'https://cdn.moengage.com/release/' + cluster.toLowerCase() + '/moe_webSdk_webp.min.latest.js?app_id=' + data.appId + '&cluster=' + data.cluster + '&env=' + data.env;

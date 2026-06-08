@@ -23,3 +23,5 @@ versions:
     changeNotes: 1.9.0 Standardized SDK Config and API names
   - sha: 5456cd94d80dcb9c1be9b51d0a7dce9a50627009
     changeNotes: 1.10.0 Removed support for GTM sequencing script
+  - sha: 36e7a45064b4854cfc12be1b107d5b01cf94d540
+    changeNotes: 1.11.0 Added support for integration type tracking
