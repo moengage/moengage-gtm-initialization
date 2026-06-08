@@ -23,7 +23,7 @@ ___TEMPLATE_PARAMETERS___
 [
   {
     "type": "TEXT",
-    "name": "app_id",
+    "name": "appId",
     "displayName": "Workspace ID (earlier App ID)",
     "simpleValueType": true,
     "valueValidators": [
@@ -80,11 +80,10 @@ ___TEMPLATE_PARAMETERS___
   },
   {
     "type": "TEXT",
-    "name": "project_id",
+    "name": "projectId",
     "displayName": "Project ID",
     "simpleValueType": true,
-    "help": "Enter the Project ID, if applicable. Found in your MoEngage Dashboard.",
-    "defaultValue": "null"
+    "help": "Enter the Project ID, if applicable. Found in your MoEngage Dashboard."
   },
   {
     "type": "TEXT",
@@ -100,7 +99,7 @@ ___TEMPLATE_PARAMETERS___
   },
   {
     "type": "CHECKBOX",
-    "name": "disable_onsite",
+    "name": "disableOnsite",
     "checkboxText": "Is On-site Messaging disabled?",
     "simpleValueType": true,
     "defaultValue": false
@@ -140,7 +139,7 @@ ___TEMPLATE_PARAMETERS___
   },
   {
     "type": "TEXT",
-    "name": "bots_list",
+    "name": "botsList",
     "displayName": "List of known bots, if any (in JSON)",
     "simpleValueType": true
   },
@@ -163,7 +162,6 @@ ___TEMPLATE_PARAMETERS___
 
 ___SANDBOXED_JS_FOR_WEB_TEMPLATE___
 
-// Enter your template code here.
 const log = require('logToConsole');
 const queryPermission = require('queryPermission');
 const injectScript = require('injectScript');
@@ -171,60 +169,49 @@ const callInWindow = require('callInWindow');
 const JSON = require('JSON');
 
 const cluster = data.cluster || 'DC_1';
-let url = "https://cdn.moengage.com/release/" + cluster.toLowerCase() + "/moe_webSdk.min.latest.js";
+let url = 'https://cdn.moengage.com/release/' + cluster.toLowerCase() + '/moe_webSdk.min.latest.js';
 if (data.customProxyDomain && data.customProxyDomain.length) {
- url = url.replace("cdn.moengage.com", "cdn." + data.customProxyDomain); 
+  url = url.replace('cdn.moengage.com', 'cdn.' + data.customProxyDomain);
 }
 const message = 'Moengage: ';
 
+const onFailure = () => {
+  log(message, 'Error loading Moengage Web SDK from ' + url);
+  data.gtmOnFailure();
+};
+
 const onSuccess = () => {
-  if(data.cards) {
-     data.cards = JSON.parse(data.cards);
+  if (data.cards) {
+    data.cards = JSON.parse(data.cards);
   }
-  if (data.bots_list) {
-     data.bots_list = JSON.parse(data.bots_list); 
+  if (data.botsList) {
+     data.botsList = JSON.parse(data.botsList);
   }
-  if (data.project_id == null || data.project_id == "null" || data.project_id == "") {
-     data.project_id = null;
+  if (!data.projectId || data.projectId.trim() == "") {
+     data.projectId = null;
   }
   data.integrationType = 'GTM';
   
   callInWindow('moe', data);
   if(data.enableWebpV2) {
-    let webPURL = 'https://cdn.moengage.com/release/' + cluster.toLowerCase() + '/moe_webSdk_webp.min.latest.js?app_id=' + data.app_id + '&cluster=' + data.cluster + '&env=' + data.env;
+    let webPURL = 'https://cdn.moengage.com/release/' + cluster.toLowerCase() + '/moe_webSdk_webp.min.latest.js?app_id=' + data.appId + '&cluster=' + data.cluster + '&env=' + data.env;
     if (data.customProxyDomain && data.customProxyDomain.length) {
-     webPURL = webPURL.replace("cdn.moengage.com", "cdn." + data.customProxyDomain); 
+      webPURL = webPURL.replace('cdn.moengage.com', 'cdn.' + data.customProxyDomain);
     }
     if (data.contentSecurityNonce && data.contentSecurityNonce.length) {
       webPURL = webPURL + '&contentSecurityNonce=' + data.contentSecurityNonce;
     }
-    injectScript(webPURL, () => {  data.gtmOnSuccess();}, onFailure, webPURL);
+    injectScript(webPURL, () => { data.gtmOnSuccess(); }, onFailure, webPURL);
   } else {
     data.gtmOnSuccess();
   }
 };
 
-const onFailure = (err) => {
-  log(message, 'Error loading Moengage Web SDK from ' + url, err);
-  data.gtmOnFailure();
-};
-
-const loadSdk = () => {
-  if (queryPermission('inject_script', url)) {
-    injectScript(url, onSuccess, onFailure, url);
-  } else {
-    log(message, "Load script " + url + " failed due to permissions mismatch!");
-  }
-};
-
-let bridgeScriptUrl = 'https://cdn.moengage.com/release/' + cluster.toLowerCase() + '/sdk.gtm.min.latest.js';
-if (data.customProxyDomain && data.customProxyDomain.length) {
-  bridgeScriptUrl = bridgeScriptUrl.replace("cdn.moengage.com", "cdn." + data.customProxyDomain);
-}
-if (queryPermission('inject_script', bridgeScriptUrl)) {
-  injectScript(bridgeScriptUrl, loadSdk, loadSdk, bridgeScriptUrl);
+if (queryPermission('inject_script', url)) {
+  injectScript(url, onSuccess, onFailure, url);
 } else {
-  loadSdk();
+  log(message, 'Load script ' + url + ' failed due to permissions mismatch!');
+  data.gtmOnFailure();
 }
 
 
@@ -409,7 +396,7 @@ setup: |-
     app_id: '1234'
   };
 
-  const scriptUrl = 'https://cdn.moengage.com/webpush/moe_webSdk.min.latest.js';
+  const scriptUrl = 'https://cdn.moengage.com/release/dc_1/moe_webSdk.min.latest.js';
 
   let success, failure;
   mock('injectScript', (url, onsuccess, onfailure) => {
@@ -435,8 +422,10 @@ Added customProxyDomain support on 22/01/2026, 17:15:00
 
 Added support for GTM sequencing on 23/01/2026, 11:50:00
 
+Standardized SDK Config and API names on 31/01/2026, 00:30:00
+
 Added support for Content Security Nonce on 06/02/2026, 11:15:00
 
 Added customProxyDomain support for GTM sequencing on 25/02/2026, 11:50:00
 
-
+Replaced GTM bridge script with SDK-native MethodQueue on 06/05/2026, 00:00:00
