@@ -1,0 +1,70 @@
+name: Sync Integration Version
+
+on:
+  pull_request:
+    types: [closed]
+    branches: [master]
+
+jobs:
+  sync-version:
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout moengage-gtm-initialization
+        uses: actions/checkout@v4
+        with:
+          ref: master
+
+      - name: Read VERSION
+        run: echo "VERSION=$(tr -d '[:space:]' < VERSION)" >> "$GITHUB_ENV"
+
+      - name: Update integrationVersion in template.tpl
+        run: |
+          sed -i -E "s/data\.integrationVersion = [0-9]+;/data.integrationVersion = ${VERSION};/" template.tpl
+
+      - name: Commit and push
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          if git diff --quiet -- template.tpl; then
+            echo "template.tpl already up to date, skipping commit"
+          else
+            git add template.tpl
+            git commit -m "chore: sync integrationVersion to ${VERSION}"
+            git push origin master
+          fi
+
+      - name: Checkout moengage-gtm-actions
+        uses: actions/checkout@v4
+        with:
+          repository: moengage/moengage-gtm-actions
+          ref: master
+          token: ${{ secrets.GTM_ACTIONS_PAT }}
+          path: gtm-actions
+
+      - name: Inject Moengage.setIntegrationVersion call
+        working-directory: gtm-actions
+        run: |
+          if grep -qE "callInWindow\('Moengage\.setIntegrationVersion', [0-9]+\);" template.tpl; then
+            sed -i -E "s/callInWindow\('Moengage\.setIntegrationVersion', [0-9]+\);/callInWindow('Moengage.setIntegrationVersion', ${VERSION});/" template.tpl
+          else
+            sed -i -E "s/^([[:space:]]*)data\.gtmOnSuccess\(\);/\1callInWindow('Moengage.setIntegrationVersion', ${VERSION});\n\1data.gtmOnSuccess();/" template.tpl
+          fi
+
+      - name: Push moengage-gtm-actions to new branch
+        working-directory: gtm-actions
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          if git diff --quiet -- template.tpl; then
+            echo "template.tpl already up to date in moengage-gtm-actions, skipping push"
+            exit 0
+          fi
+          BRANCH="sync/integration-version-${VERSION}"
+          git checkout -b "$BRANCH"
+          git add template.tpl
+          git commit -m "chore: sync integrationVersion to ${VERSION}"
+          git push origin "$BRANCH" --force
