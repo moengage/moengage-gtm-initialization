@@ -2,7 +2,7 @@ name: Sync Integration Version
 
 on:
   push:
-    branches: [origin/feat/WEB-392-gtm-versioning]
+    branches: [feat/WEB-392-gtm-versioning]
 
 jobs:
   sync-version:
@@ -14,7 +14,7 @@ jobs:
       - name: Checkout moengage-gtm-initialization
         uses: actions/checkout@v4
         with:
-          ref: origin/feat/WEB-392-gtm-versioning
+          ref: feat/WEB-392-gtm-versioning
 
       - name: Read VERSION
         run: echo "VERSION=$(tr -d '[:space:]' < VERSION)" >> "$GITHUB_ENV"
@@ -32,7 +32,7 @@ jobs:
           else
             git add template.tpl
             git commit -m "chore: sync integrationVersion to ${VERSION}"
-            git push origin origin/feat/WEB-392-gtm-versioning
+            git push origin feat/WEB-392-gtm-versioning
           fi
 
       - name: Checkout moengage-gtm-actions
