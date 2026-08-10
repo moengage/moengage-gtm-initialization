@@ -55,7 +55,8 @@ jobs:
       - name: Push moengage-gtm-actions to new branch
         working-directory: gtm-actions
         run: |
-          token: ${{ secrets.PAT }}
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
           if git diff --quiet -- template.tpl; then
             echo "template.tpl already up to date in moengage-gtm-actions, skipping push"
             exit 0
