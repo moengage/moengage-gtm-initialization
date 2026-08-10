@@ -1,9 +1,8 @@
 name: Sync Integration Version
 
 on:
-  pull_request:
-    types: [closed]
-    branches: [master]
+  push:
+    branches: [origin/feat/WEB-392-gtm-versioning]
 
 jobs:
   sync-version:
@@ -16,7 +15,7 @@ jobs:
       - name: Checkout moengage-gtm-initialization
         uses: actions/checkout@v4
         with:
-          ref: master
+          ref: origin/feat/WEB-392-gtm-versioning
 
       - name: Read VERSION
         run: echo "VERSION=$(tr -d '[:space:]' < VERSION)" >> "$GITHUB_ENV"
@@ -27,14 +26,14 @@ jobs:
 
       - name: Commit and push
         run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git config user.email "nawaz@moengage.com"
+          git config user.name "nawazMoEngage"
           if git diff --quiet -- template.tpl; then
             echo "template.tpl already up to date, skipping commit"
           else
             git add template.tpl
             git commit -m "chore: sync integrationVersion to ${VERSION}"
-            git push origin master
+            git push origin origin/feat/WEB-392-gtm-versioning
           fi
 
       - name: Checkout moengage-gtm-actions
@@ -42,7 +41,7 @@ jobs:
         with:
           repository: moengage/moengage-gtm-actions
           ref: master
-          token: ${{ secrets.GTM_ACTIONS_PAT }}
+          token: ${{ secrets.PAT }}
           path: gtm-actions
 
       - name: Inject Moengage.setIntegrationVersion call
@@ -57,8 +56,8 @@ jobs:
       - name: Push moengage-gtm-actions to new branch
         working-directory: gtm-actions
         run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git config user.email "nawaz@moengage.com"
+          git config user.name "nawazMoEngage"
           if git diff --quiet -- template.tpl; then
             echo "template.tpl already up to date in moengage-gtm-actions, skipping push"
             exit 0
