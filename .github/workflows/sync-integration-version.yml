@@ -25,8 +25,7 @@ jobs:
 
       - name: Commit and push
         run: |
-          git config user.email "nawaz@moengage.com"
-          git config user.name "nawazMoEngage"
+          token: ${{ secrets.PAT }}
           if git diff --quiet -- template.tpl; then
             echo "template.tpl already up to date, skipping commit"
           else
@@ -55,8 +54,7 @@ jobs:
       - name: Push moengage-gtm-actions to new branch
         working-directory: gtm-actions
         run: |
-          git config user.email "nawaz@moengage.com"
-          git config user.name "nawazMoEngage"
+          token: ${{ secrets.PAT }}
           if git diff --quiet -- template.tpl; then
             echo "template.tpl already up to date in moengage-gtm-actions, skipping push"
             exit 0
