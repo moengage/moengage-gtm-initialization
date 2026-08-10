@@ -191,7 +191,7 @@ const onSuccess = () => {
      data.projectId = null;
   }
   data.integrationType = 'GTM';
-  data.integrationVersion = 3;
+  data.integrationVersion = 4;
   
   callInWindow('moe', data);
   if(data.enableWebpV2) {
