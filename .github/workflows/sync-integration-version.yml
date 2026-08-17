@@ -1,11 +1,13 @@
 name: Sync Integration Version
 
 on:
-  push:
-    branches: [feat/WEB-392-gtm-versioning]
+  pull_request:
+    types: [closed]
+    branches: [master]
 
 jobs:
   sync-version:
+    if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -14,16 +16,32 @@ jobs:
       - name: Checkout moengage-gtm-initialization
         uses: actions/checkout@v4
         with:
-          ref: feat/WEB-392-gtm-versioning
+          ref: master
 
-      - name: Read VERSION
-        run: echo "VERSION=$(tr -d '[:space:]' < VERSION)" >> "$GITHUB_ENV"
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Extract version from metadata.yaml
+        run: |
+          NOTES=$(grep 'changeNotes:' metadata.yaml | tail -1 | sed -E "s/^[[:space:]]*changeNotes:[[:space:]]*//")
+          VERSION=$(echo "$NOTES" | grep -oE '^[0-9]+\.[0-9]+\.[0-9]+')
+          if [ -z "$VERSION" ]; then
+            echo "::error::Could not extract a semver version from the latest metadata.yaml changeNotes: $NOTES"
+            exit 1
+          fi
+          echo "VERSION=$VERSION" >> "$GITHUB_ENV"
 
       - name: Update integrationVersion in template.tpl
         run: |
-          sed -i -E "s/data\.integrationVersion = [0-9]+;/data.integrationVersion = ${VERSION};/" template.tpl
+          sed -i -E "s/data\.integrationVersion = [^;]+;/data.integrationVersion = '${VERSION}';/" template.tpl
+          grep -qF "data.integrationVersion = '${VERSION}';" template.tpl || {
+            echo "::error::Failed to set data.integrationVersion to ${VERSION} in template.tpl"
+            exit 1
+          }
 
-      - name: Commit and push
+      - name: Commit and push (own repo)
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
@@ -32,7 +50,7 @@ jobs:
           else
             git add template.tpl
             git commit -m "chore: sync integrationVersion to ${VERSION}"
-            git push origin feat/WEB-392-gtm-versioning
+            git push origin master
           fi
 
       - name: Checkout moengage-gtm-actions
@@ -40,29 +58,54 @@ jobs:
         with:
           repository: moengage/moengage-gtm-actions
           ref: master
-          token: ${{ secrets.PAT }}
+          token: ${{ secrets.SDK_BOT_ACCESS_TOKEN }}
           path: gtm-actions
 
-      - name: Inject Moengage.setIntegrationVersion call
+      - name: Update Moengage.setIntegrationVersion in moengage-gtm-actions
         working-directory: gtm-actions
         run: |
-          if grep -qE "callInWindow\('Moengage\.setIntegrationVersion', [0-9]+\);" template.tpl; then
-            sed -i -E "s/callInWindow\('Moengage\.setIntegrationVersion', [0-9]+\);/callInWindow('Moengage.setIntegrationVersion', ${VERSION});/" template.tpl
+          if grep -qE "callInWindow\('Moengage\.setIntegrationVersion', [^)]+\);" template.tpl; then
+            sed -i -E "s/callInWindow\('Moengage\.setIntegrationVersion', [^)]+\);/callInWindow('Moengage.setIntegrationVersion', '${VERSION}');/" template.tpl
           else
-            sed -i -E "s/^([[:space:]]*)data\.gtmOnSuccess\(\);/\1callInWindow('Moengage.setIntegrationVersion', ${VERSION});\n\1data.gtmOnSuccess();/" template.tpl
+            sed -i -E "s/^([[:space:]]*)data\.gtmOnSuccess\(\);/\1callInWindow('Moengage.setIntegrationVersion', '${VERSION}');\n\1data.gtmOnSuccess();/" template.tpl
           fi
+          grep -qF "callInWindow('Moengage.setIntegrationVersion', '${VERSION}');" template.tpl || {
+            echo "::error::Failed to set Moengage.setIntegrationVersion to ${VERSION} in moengage-gtm-actions/template.tpl"
+            exit 1
+          }
 
-      - name: Push moengage-gtm-actions to new branch
+      - name: Validate sandboxed JS still parses
+        working-directory: gtm-actions
+        run: |
+          sed -n '/^___SANDBOXED_JS_FOR_WEB_TEMPLATE___/,/^___WEB_PERMISSIONS___/p' template.tpl | sed '1d;$d' > /tmp/sandboxed.js
+          node --check /tmp/sandboxed.js
+
+      - name: Commit template.tpl in moengage-gtm-actions
+        id: commit_template
         working-directory: gtm-actions
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           if git diff --quiet -- template.tpl; then
-            echo "template.tpl already up to date in moengage-gtm-actions, skipping push"
-            exit 0
+            echo "template.tpl already up to date in moengage-gtm-actions, skipping"
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          else
+            git add template.tpl
+            git commit -m "chore: sync integrationVersion to ${VERSION}"
+            git push origin master
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+            echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
           fi
-          BRANCH="sync/integration-version-${VERSION}"
-          git checkout -b "$BRANCH"
-          git add template.tpl
-          git commit -m "chore: sync integrationVersion to ${VERSION}"
-          git push origin "$BRANCH" --force
+
+      - name: Append metadata.yaml entry in moengage-gtm-actions
+        if: steps.commit_template.outputs.changed == 'true'
+        working-directory: gtm-actions
+        run: |
+          SHA="${{ steps.commit_template.outputs.sha }}"
+          {
+            echo "  - sha: ${SHA}"
+            echo "    changeNotes: ${VERSION} Bumped version because of the release in moengage-gtm-initialization"
+          } >> metadata.yaml
+          git add metadata.yaml
+          git commit -m "chore: record integrationVersion ${VERSION} sync from moengage-gtm-initialization"
+          git push origin master
