@@ -23,6 +23,11 @@ jobs:
         with:
           node-version: 20
 
+      - name: Configure git identity
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+
       - name: Extract version from metadata.yaml
         run: |
           NOTES=$(grep 'changeNotes:' metadata.yaml | tail -1 | sed -E "s/^[[:space:]]*changeNotes:[[:space:]]*//")
@@ -41,10 +46,13 @@ jobs:
             exit 1
           }
 
+      - name: Validate sandboxed JS still parses (own repo)
+        run: |
+          sed -n '/^___SANDBOXED_JS_FOR_WEB_TEMPLATE___/,/^___WEB_PERMISSIONS___/p' template.tpl | sed '1d;$d' > /tmp/sandboxed-own.js
+          node --check /tmp/sandboxed-own.js
+
       - name: Commit and push (own repo)
         run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
           if git diff --quiet -- template.tpl; then
             echo "template.tpl already up to date, skipping commit"
           else
@@ -52,6 +60,9 @@ jobs:
             git commit -m "chore: sync integrationVersion to ${VERSION}"
             git push origin master
           fi
+
+      - name: Record origin commit SHA
+        run: echo "ORIGIN_SHA=$(git rev-parse HEAD)" >> "$GITHUB_ENV"
 
       - name: Checkout moengage-gtm-actions
         uses: actions/checkout@v4
@@ -74,38 +85,31 @@ jobs:
             exit 1
           }
 
-      - name: Validate sandboxed JS still parses
+      - name: Validate sandboxed JS still parses (moengage-gtm-actions)
         working-directory: gtm-actions
         run: |
-          sed -n '/^___SANDBOXED_JS_FOR_WEB_TEMPLATE___/,/^___WEB_PERMISSIONS___/p' template.tpl | sed '1d;$d' > /tmp/sandboxed.js
-          node --check /tmp/sandboxed.js
+          sed -n '/^___SANDBOXED_JS_FOR_WEB_TEMPLATE___/,/^___WEB_PERMISSIONS___/p' template.tpl | sed '1d;$d' > /tmp/sandboxed-actions.js
+          node --check /tmp/sandboxed-actions.js
 
-      - name: Commit template.tpl in moengage-gtm-actions
-        id: commit_template
+      - name: Record metadata.yaml entry in moengage-gtm-actions
         working-directory: gtm-actions
         run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
           if git diff --quiet -- template.tpl; then
-            echo "template.tpl already up to date in moengage-gtm-actions, skipping"
-            echo "changed=false" >> "$GITHUB_OUTPUT"
+            echo "template.tpl already up to date in moengage-gtm-actions, nothing to sync"
           else
-            git add template.tpl
-            git commit -m "chore: sync integrationVersion to ${VERSION}"
-            git push origin master
-            echo "changed=true" >> "$GITHUB_OUTPUT"
-            echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+            {
+              echo "  - sha: ${ORIGIN_SHA}"
+              echo "    changeNotes: ${VERSION} Added versioning in GTM templates"
+            } >> metadata.yaml
           fi
 
-      - name: Append metadata.yaml entry in moengage-gtm-actions
-        if: steps.commit_template.outputs.changed == 'true'
+      - name: Commit and push moengage-gtm-actions
         working-directory: gtm-actions
         run: |
-          SHA="${{ steps.commit_template.outputs.sha }}"
-          {
-            echo "  - sha: ${SHA}"
-            echo "    changeNotes: ${VERSION} Bumped version because of the release in moengage-gtm-initialization"
-          } >> metadata.yaml
-          git add metadata.yaml
-          git commit -m "chore: record integrationVersion ${VERSION} sync from moengage-gtm-initialization"
-          git push origin master
+          if git diff --quiet; then
+            echo "Nothing to sync into moengage-gtm-actions, skipping commit"
+          else
+            git add template.tpl metadata.yaml
+            git commit -m "chore: sync integrationVersion to ${VERSION}"
+            git push origin master
+          fi
